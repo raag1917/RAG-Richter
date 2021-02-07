@@ -1,23 +1,37 @@
 package com.raag.ragrichter.repository
 
-import com.raag.ragrichter.data.Terremoto
+import androidx.lifecycle.LiveData
+import com.raag.ragrichter.data.Earthquake
+import com.raag.ragrichter.database.EqDatabase
 import com.raag.ragrichter.responses.TResponses
 import com.raag.ragrichter.webservices.service
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class Repo {
-    suspend fun fetchTerremotoData(): MutableList<Terremoto> {
+class Repo (private val eqDatabase: EqDatabase) {
+
+    suspend fun fetchTerremotoData(sortByMagnitude: Boolean): MutableList<Earthquake> {
         return withContext(Dispatchers.IO){
             val terremotosList: TResponses = service.getTerremotosData()
             val eq = parseResult(terremotosList)
 
-            eq
+            eqDatabase.eqDao.insertAll(eq)
+            fetchTerremotDB(sortByMagnitude)
         }
     }
 
-    private fun parseResult(tResponse: TResponses): MutableList<Terremoto>{
-        val tList = mutableListOf<Terremoto>()
+    suspend fun fetchTerremotDB(sortByMagnitude: Boolean): MutableList<Earthquake> {
+        return withContext(Dispatchers.IO) {
+            if (sortByMagnitude) {
+                eqDatabase.eqDao.getEartquakeByMagnitude()
+            } else {
+                eqDatabase.eqDao.getEartquake()
+            }
+        }
+    }
+
+    private fun parseResult(tResponse: TResponses): MutableList<Earthquake>{
+        val tList = mutableListOf<Earthquake>()
         val featuresList = tResponse.features
 
         for (features in featuresList){
@@ -32,7 +46,7 @@ class Repo {
             val latitude = geometry.latitude
             val longitude = geometry.longitude
 
-            tList.add(Terremoto(id,place,magnitude,time,longitude, latitude))
+            tList.add(Earthquake(id,place,magnitude,time,longitude, latitude))
         }
         return tList
     }

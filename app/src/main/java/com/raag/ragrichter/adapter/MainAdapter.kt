@@ -9,25 +9,25 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.raag.ragrichter.R
 import com.raag.ragrichter.databinding.ItemTerremotoBinding
-import com.raag.ragrichter.data.Terremoto
+import com.raag.ragrichter.data.Earthquake
 
 //Permite tomar el nombre de la clase y asignarlo a la variable TAG
 private val TAG = MainAdapter::class.java.simpleName
 
-class MainAdapter(val context: Context): ListAdapter<Terremoto, MainAdapter.MainViewHolder>(DiffCallback) {
+class MainAdapter(val context: Context): ListAdapter<Earthquake, MainAdapter.MainViewHolder>(DiffCallback) {
 
-    companion object DiffCallback: DiffUtil.ItemCallback<Terremoto>(){
-        override fun areItemsTheSame(oldItem: Terremoto, newItem: Terremoto): Boolean {
+    companion object DiffCallback: DiffUtil.ItemCallback<Earthquake>(){
+        override fun areItemsTheSame(oldItem: Earthquake, newItem: Earthquake): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: Terremoto, newItem: Terremoto): Boolean {
+        override fun areContentsTheSame(oldItem: Earthquake, newItem: Earthquake): Boolean {
             return oldItem == newItem
         }
 
     }
 
-    lateinit var onItemClickListener: (Terremoto) -> Unit
+    lateinit var onItemClickListener: (Earthquake) -> Unit
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         MainViewHolder(ItemTerremotoBinding.inflate(LayoutInflater.from(parent.context)))
@@ -39,14 +39,14 @@ class MainAdapter(val context: Context): ListAdapter<Terremoto, MainAdapter.Main
     }
 
     inner class MainViewHolder(private val binding: ItemTerremotoBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(terremoto: Terremoto){
+        fun bind(earthquake: Earthquake){
 
 
-            binding.tvMagnitud.text =  context.getString(R.string.magnitude_format, terremoto.magnitude)
-            binding.tvLugar.text = terremoto.place
+            binding.tvMagnitud.text =  context.getString(R.string.magnitude_format, earthquake.magnitude)
+            binding.tvLugar.text = earthquake.place
             binding.btVer.setOnClickListener {
                 if(::onItemClickListener.isInitialized){
-                    onItemClickListener(terremoto)
+                    onItemClickListener(earthquake)
                 }else{
                     d(TAG, "onItemClickListener no Initialized" )
                 }

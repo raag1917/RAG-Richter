@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">RAG Richter</string>
     <string name="magnitude_format">%.2f</string>
+    <string name="ordenar_por_magnitud">Ordenar por magnitud</string>
+    <string name="ordenar_por_time">Ordenar por tiempo</string>
+    <string name="datos_cargados">Datos cargados con éxito</string>
 </resources>
