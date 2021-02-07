@@ -1,18 +1,20 @@
 package com.raag.ragrichter.adapter
 
+import android.content.Context
 import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.raag.ragrichter.R
 import com.raag.ragrichter.databinding.ItemTerremotoBinding
-import com.raag.ragrichter.model.Terremoto
+import com.raag.ragrichter.data.Terremoto
 
 //Permite tomar el nombre de la clase y asignarlo a la variable TAG
 private val TAG = MainAdapter::class.java.simpleName
 
-class MainAdapter: ListAdapter<Terremoto, MainAdapter.MainViewHolder>(DiffCallback) {
+class MainAdapter(val context: Context): ListAdapter<Terremoto, MainAdapter.MainViewHolder>(DiffCallback) {
 
     companion object DiffCallback: DiffUtil.ItemCallback<Terremoto>(){
         override fun areItemsTheSame(oldItem: Terremoto, newItem: Terremoto): Boolean {
@@ -38,7 +40,9 @@ class MainAdapter: ListAdapter<Terremoto, MainAdapter.MainViewHolder>(DiffCallba
 
     inner class MainViewHolder(private val binding: ItemTerremotoBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(terremoto: Terremoto){
-            binding.tvMagnitud.text = terremoto.magnitude.toString()
+
+
+            binding.tvMagnitud.text =  context.getString(R.string.magnitude_format, terremoto.magnitude)
             binding.tvLugar.text = terremoto.place
             binding.btVer.setOnClickListener {
                 if(::onItemClickListener.isInitialized){

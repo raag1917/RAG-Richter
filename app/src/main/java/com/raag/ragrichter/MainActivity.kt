@@ -4,34 +4,40 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.raag.ragrichter.adapter.MainAdapter
 import com.raag.ragrichter.databinding.ActivityMainBinding
-import com.raag.ragrichter.model.Terremoto
+import com.raag.ragrichter.data.Terremoto
+import com.raag.ragrichter.viewmodel.MainViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private lateinit var viewModel:MainViewModel
+    private val adapter = MainAdapter(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val terremotos = mutableListOf<Terremoto>()
-        terremotos.add(Terremoto("1","Comuna 13, Medellín, Antioquia. Colombia",4.5, 23423423523, -122.3453, 32.92394))
-        terremotos.add(Terremoto("2","Comuna 14, Medellín, Antioquia. Colombia",3.5, 23423423523, -122.3453, 32.92394))
-        terremotos.add(Terremoto("3","Comuna 12, Medellín, Antioquia. Colombia",2.5, 23423423523, -122.3453, 32.92394))
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
-        val adapter = MainAdapter()
+        viewModel.tList.observe(this, {
+            binding.recyclerView.adapter = adapter
+            adapter.submitList(it)
+            viewEmptyList(it)
+        })
 
         adapter.onItemClickListener = {
             Toast.makeText(this, it.place, Toast.LENGTH_SHORT).show()
         }
 
-        binding.recyclerView.adapter = adapter
-        adapter.submitList(terremotos)
+    }
 
-        if(terremotos.isEmpty()){
+    private fun viewEmptyList(it: MutableList<Terremoto>) {
+        if (it.isEmpty()) {
             binding.pbEmpty.visibility = View.VISIBLE
-        } else{
+        } else {
             binding.pbEmpty.visibility = View.GONE
         }
     }
